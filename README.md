@@ -1,48 +1,32 @@
 ScanLink
 Overview
-ScanLink is a QR code authenticator that verifies identity through a connected database. This project is designed for use cases where seamless, reliable identity verification is needed. ScanLink is built to integrate modern database checks and straightforward user feedback through LED indicators.
+ScanLink is a QR code authenticator designed to verify identities by cross-referencing with a database. This project focuses on efficient and secure identity verification, making use of QR scanning technology and a backend system for real-time checks.
 
 Features
-QR Code Authentication: Scans and extracts ID and name from QR codes.
-Database Verification: Checks extracted information against a database for validation.
-Visual Indicators: Green LED for successful verification and red LED for failed authentication.
-Web-based Dashboard: (Future implementation) Admin dashboard for data management and monitoring.
-Technology Stack
-Hardware: Arduino for QR code scanning and LED control.
-Software:
-Backend: Flask framework.
-Database: PostgreSQL for data storage and verification.
-Frontend: Minimal interface to display authentication results.
-Programming Languages: Python, C/C++ (for Arduino).
-Setup and Installation
-Clone the Repository:
-
+QR Code Scanning: Reads and decodes QR codes containing user details.
+Database Integration: Utilizes SQLite for identity verification.
+Status Indicators: Mini LED indicators (green for verified, red for unverified).
+Installation
+Clone the repository:
 bash
 Copy code
-git clone https://github.com/your-username/ScanLink.git
+git clone <repository-url>
+Navigate to the project directory:
+bash
+Copy code
 cd ScanLink
-Install Dependencies: Ensure you have Python and pip installed, then run:
-
+Install the required dependencies:
 bash
 Copy code
 pip install -r requirements.txt
-Configure Database:
-
-Set up PostgreSQL and create the necessary tables.
-Update config.py with database connection details.
-Run the Application:
-
+Usage
+Start the application:
 bash
 Copy code
 python app.py
-Upload the Arduino Code:
-
-Connect your Arduino board and upload the relevant QR code scanning sketch using the Arduino IDE.
-Usage
-Start the server using python app.py.
-Scan QR codes using the connected Arduino.
-View LED feedback for verification results.
-Future Enhancements
-Implementation of a comprehensive web-based admin dashboard.
-Integration with more extensive, secure identity verification APIs.
-Mobile-friendly app interface for better accessibility.
+Scan a QR code using the interface to verify identity against the SQLite database.
+Technical Stack
+Frontend: Basic web interface (or specify further if applicable)
+Backend: Python (Flask 3.0.3)
+Database: SQLite
+Development Environment: Visual Studio Code / GitHub Desktop for version control
