@@ -1,6 +1,5 @@
 #include <collections.h>
 #include <fmath.h>
-#include <quirc.h>
 #include <quirc_internal.h>
 #include "quirc.h"
 #include <WiFi.h>
@@ -10,13 +9,18 @@
 #include "esp_camera.h"
 #include "soc/soc.h"
 #include "soc/rtc_cntl_reg.h"
-#include "quirc.h"
 
 /* ======================================== Wi-Fi Credentials */
-const char* ssid = "Adar";
-const char* password = "Shikma123"; 
-const char* serverURL = "http://192.168.1.98:5000/verify"; // Flask server address
+const char* ssid = "*****";
+const char* password = "*****"; 
+const char* serverURL = "http://172.20.10.9:5000/verify"; // Flask server address
 /* ======================================== */
+
+/* ======================================== */ //LED Pins
+const int GLED = 13; //GPIO 13
+const int RLED = 2; //GPIO 2
+/* ======================================== */
+
 
 // creating a task handle
 TaskHandle_t QRCodeReader_Task; 
@@ -28,6 +32,8 @@ TaskHandle_t QRCodeReader_Task;
 //#define CAMERA_MODEL_M5STACK_WITHOUT_PSRAM
 //#define CAMERA_MODEL_M5STACK_WITHOUT_PSRAM
 #define CAMERA_MODEL_AI_THINKER
+
+//#define LED_FLASH_GPIO 4
 /* ======================================== */
 
 /* ======================================== GPIO of camera models */
@@ -172,6 +178,26 @@ void setup() {
   Serial.println();
   /* ---------------------------------------- */
 
+  //Initialize LEDs
+  //pinMode(LED_FLASH_GPIO, OUTPUT);
+ // digitalWrite(LED_FLASH_GPIO, LOW);
+  pinMode(GLED, OUTPUT);
+  pinMode(RLED, OUTPUT);
+
+  //Verify Green and Red LEDs are functional
+    for(int i = 0; i < 3; i++){
+      digitalWrite(GLED, LOW);
+      digitalWrite(RLED, LOW);
+      delay(500);
+      digitalWrite(GLED, HIGH);
+      digitalWrite(RLED, HIGH);
+      delay(500);
+    }
+    //turn off LEDs after verified
+    digitalWrite(GLED, LOW);
+    digitalWrite(RLED, LOW);
+
+
   // Connect to WiFi
   connectToWiFi();
 
@@ -219,6 +245,7 @@ void setup() {
   
   Serial.println("Configure and initialize the camera successfully.");
   Serial.println();
+
   /* ---------------------------------------- */
 
   /* ---------------------------------------- create "QRCodeReader_Task" using the xTaskCreatePinnedToCore() function */
@@ -231,6 +258,7 @@ void setup() {
              &QRCodeReader_Task,    /* Task handle to keep track of created task */
              0);                    /* pin task to core 0 */
   /* ---------------------------------------- */
+
 // Call the function with the QR code data
       checkQRCodeInDatabase(QRCodeResult);
            // checkQRCodeInDatabase("45678, Ben Smith");
@@ -299,6 +327,8 @@ void QRCodeReader( void * pvParameters ){
       fb = NULL;
       image = NULL;  
       quirc_destroy(q);
+
+      vTaskDelay(100 / portTICK_PERIOD_MS); //Add delay (100 ms)
   }
   /* ---------------------------------------- */
 }
@@ -357,8 +387,16 @@ void checkQRCodeInDatabase(String qrCodeData) {
     Serial.println("Server response: " + payload);
     if (payload == "verified") {
       Serial.println("QR code data exists in the database.");
+      digitalWrite(GLED, HIGH);//turns on Green LED
+      digitalWrite(RLED, LOW); //turns off Red LED
+      delay(2000);
+      digitalWrite(GLED, LOW); //Turns off Red LED
     } else {
       Serial.println("QR code data not found in the database.");
+      digitalWrite(RLED, HIGH); //turns on Red LED
+      digitalWrite(GLED, LOW); //turns off Green LED
+      delay(2000);
+      digitalWrite(RLED, LOW); //turns off Red LED
     }
   } else {
     Serial.println("HTTP request failed with error code: " + String(httpCode));
